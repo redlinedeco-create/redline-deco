@@ -1,0 +1,57 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# testing
+coverage/
+
+# next.js
+.next/
+out/
+next-env.d.ts
+
+# production
+build/
+dist/
+
+# typescript
+*.tsbuildinfo
+
+# misc
+.DS_Store
+Thumbs.db
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files
+.env
+.env*.local
+
+# vercel
+.vercel
+
+# netlify
+.netlify
+
+# project photos -- served from Supabase Storage, not the repo
+# (public/images/logo.png and nightlogo.png stay tracked on purpose: the
+# header must render even if Supabase is unreachable)
+public/images/decorations/
+public/images/dryceiling/
+public/images/drywalls/
+public/images/led-profile/
+public/images/painting/
+public/images/pvc/
+
+# editors
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# misc
+*.pem
