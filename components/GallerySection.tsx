@@ -5,11 +5,8 @@ import { useCallback, useEffect, useState } from "react";
 import { X, ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
 import { SectionTitle } from "./SectionTitle";
 import { useLanguage } from "@/lib/providers/LanguageProvider";
-import { projects } from "@/data/projects";
-import { categories } from "@/data/categories";
 import { cn } from "@/lib/utils";
-
-const categorySlugs = categories.map((c) => c.slug);
+import type { Category, Project } from "@/types";
 
 const CAP_ALL = 48;
 const CAP_FILTERED = 24;
@@ -21,13 +18,23 @@ function sample<T>(list: T[], count: number): T[] {
   return Array.from({ length: count }, (_, i) => list[Math.floor(i * step)]);
 }
 
-export function GallerySection() {
+export function GallerySection({
+  projects,
+  categories,
+}: {
+  projects?: Project[];
+  categories?: Category[];
+}) {
   const { t, language, dir } = useLanguage();
   const [filter, setFilter] = useState("all");
   const [active, setActive] = useState<{ src: string; caption: string } | null>(null);
   const [items, setItems] = useState<{ src: string; caption: string }[]>([]);
+  const categorySlugs = (categories ?? []).map((c) => c.slug);
+  const categoryName = (slug: string) =>
+    (categories ?? []).find((c) => c.slug === slug)?.name;
 
   useEffect(() => {
+    if (!projects) return;
     const flat: { src: string; caption: string; cat: string }[] = [];
     projects.forEach((p) => {
       const caption = p.title[language] ?? p.title.en;
@@ -37,7 +44,7 @@ export function GallerySection() {
     });
     const list = filter === "all" ? flat : flat.filter((f) => f.cat === filter);
     setItems(sample(list, filter === "all" ? CAP_ALL : CAP_FILTERED));
-  }, [filter, language]);
+  }, [projects, filter, language]);
 
   const index = items.findIndex((i) => i.src === active?.src);
   const goPrev = useCallback(() => {
@@ -60,6 +67,8 @@ export function GallerySection() {
     return () => window.removeEventListener("keydown", onKey);
   }, [active, goPrev, goNext]);
 
+  if (!projects) return null;
+
   return (
     <section className="section-padding bg-background">
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -70,7 +79,11 @@ export function GallerySection() {
         />
         <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
           {categorySlugs.map((s) => {
-            const label = t(`gallery.categories.${s}`);
+            const label =
+              t(`gallery.categories.${s}`) ??
+              categoryName(s)?.[language] ??
+              categoryName(s)?.en ??
+              s;
             const active = filter === s;
             return (
               <button
@@ -156,20 +169,22 @@ export function GallerySection() {
             <ChevronRight className={cn("h-6 w-6", dir === "rtl" && "scale-x-[-1]")} />
           </button>
           <div
-            className="relative max-w-5xl w-full max-h-[80vh] flex flex-col items-center"
+            className="relative flex flex-col items-center w-[90vw] max-w-4xl max-h-[90vh]"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative w-full aspect-video">
+            <div className="relative w-full h-[65vh] sm:h-[75vh]">
               <Image
                 src={active.src}
                 alt={active.caption}
                 fill
                 className="object-contain"
-                sizes="100vw"
+                sizes="90vw"
                 priority
               />
             </div>
-            <p className="mt-4 text-white/90 text-sm">{active.caption}</p>
+            <p className="mt-3 max-w-full text-white/90 text-sm text-center break-words">
+              {active.caption}
+            </p>
           </div>
         </div>
       )}

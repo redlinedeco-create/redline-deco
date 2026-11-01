@@ -32,7 +32,7 @@ export function WhyChooseUs() {
           titleI18n="whyUs.title"
           subtitleI18n="whyUs.subtitle"
         />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="stack-mobile grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {keys.map((k, i) => {
             const Icon = whyIcons[i] ?? CheckCircle2;
             const item = t(`whyUs.items.${k}`);
@@ -78,7 +78,7 @@ export function ProcessSection() {
             )}
             aria-hidden
           />
-          <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+          <ol className="stack-mobile grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
             {steps.map((k, i) => {
               const Icon = processIcons[i] ?? FileText;
               const item = t(`process.steps.${k}`);

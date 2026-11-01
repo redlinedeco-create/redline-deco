@@ -12,7 +12,10 @@ export function Logo({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "relative block aspect-[1024/402] h-8 w-auto sm:h-9",
+        // Explicit width: aspect-ratio alone leaves the (absolutely filled)
+        // images with a zero-size box on browsers/configs where the ratio is
+        // not applied, which shows nothing at all.
+        "relative block h-10 w-[102px] shrink-0 sm:h-12 sm:w-[122px]",
         className,
       )}
     >
@@ -21,7 +24,7 @@ export function Logo({ className }: { className?: string }) {
         alt=""
         aria-hidden
         fill
-        sizes="(max-width:640px) 82px, 92px"
+        sizes="(max-width:640px) 102px, 122px"
         className="object-contain dark:hidden"
         priority
       />
@@ -30,7 +33,7 @@ export function Logo({ className }: { className?: string }) {
         alt=""
         aria-hidden
         fill
-        sizes="(max-width:640px) 82px, 92px"
+        sizes="(max-width:640px) 102px, 122px"
         className="hidden object-contain dark:block"
       />
     </span>

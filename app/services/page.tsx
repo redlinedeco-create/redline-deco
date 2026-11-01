@@ -1,6 +1,9 @@
 import { PageHeader } from "@/components/PageHeader";
 import { Services } from "@/components/Services";
 import { CTASection } from "@/components/Testimonials";
+import { getServices } from "@/lib/content";
+
+export const revalidate = 60;
 
 export const metadata = {
   title: "Services | Redline Deco",
@@ -9,7 +12,9 @@ export const metadata = {
   alternates: { canonical: "/services" },
 };
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const services = await getServices();
+
   return (
     <>
       <PageHeader
@@ -17,7 +22,7 @@ export default function ServicesPage() {
         titleI18n="pages.services.title"
         subtitleI18n="pages.services.subtitle"
       />
-      <Services />
+      <Services services={services} />
       <CTASection />
     </>
   );

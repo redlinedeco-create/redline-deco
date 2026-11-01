@@ -4,20 +4,22 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { X, MapPin, Calendar, ArrowRight, Tag } from "lucide-react";
-import type { Project } from "@/types";
+import type { Category, Project, ServiceItem } from "@/types";
 import { useLanguage } from "@/lib/providers/LanguageProvider";
-import { categories } from "@/data/categories";
 import { BeforeAfter } from "./BeforeAfter";
 import { ProjectGallery } from "./ProjectGallery";
 import { cn } from "@/lib/utils";
-import { services } from "@/data/services";
 
 export function ProjectDetailModal({
   project,
   onClose,
+  categories,
+  services,
 }: {
   project: Project | null;
   onClose: () => void;
+  categories?: Category[];
+  services?: ServiceItem[];
 }) {
   const { t, language, dir } = useLanguage();
   const [mounted, setMounted] = useState(false);
@@ -97,7 +99,7 @@ export function ProjectDetailModal({
               <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground mb-4">
                 <span className="inline-flex items-center gap-1">
                   <Tag className="h-3.5 w-3.5 text-brand-red" />
-                  {(categories.find((c) => c.slug === p.category)?.name[language]) ??
+                  {(categories?.find((c) => c.slug === p.category)?.name[language]) ??
                     p.category}
                 </span>
                 <span className="inline-flex items-center gap-1">
@@ -124,8 +126,8 @@ export function ProjectDetailModal({
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {p.services.map((slug) => {
-                      const s = services.find((x) => x.id === `svc-${slug}`) ||
-                        services.find((x) => x.icon === slug);
+                      const s = (services ?? []).find((x) => x.id === `svc-${slug}`) ||
+                        (services ?? []).find((x) => x.icon === slug);
                       const label = s
                         ? s.name[language] ?? s.name.en
                         : slug;
@@ -167,7 +169,7 @@ export function ProjectDetailModal({
                   </p>
                 </div>
                 <Link
-                  href="/quote"
+                  href="/contact"
                   onClick={onClose}
                   className="inline-flex items-center gap-2 rounded-md bg-brand-red text-white px-5 py-3 font-semibold shadow hover:bg-brand-red-600 transition-colors"
                 >

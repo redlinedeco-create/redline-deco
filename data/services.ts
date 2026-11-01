@@ -15,7 +15,7 @@ export const services: ServiceItem[] = [
     },
     icon: "Layers",
     startingPrice: 1800,
-    unit: "m²",
+    unit: { en: "m²", fr: "m²", ar: "م²" },
   },
   {
     id: "svc-2",
@@ -31,7 +31,7 @@ export const services: ServiceItem[] = [
     },
     icon: "Ceiling",
     startingPrice: 2500,
-    unit: "m²",
+    unit: { en: "m²", fr: "m²", ar: "م²" },
   },
   {
     id: "svc-3",
@@ -47,7 +47,7 @@ export const services: ServiceItem[] = [
     },
     icon: "PanelTop",
     startingPrice: 2200,
-    unit: "m²",
+    unit: { en: "m²", fr: "m²", ar: "م²" },
   },
   {
     id: "svc-4",
@@ -63,7 +63,7 @@ export const services: ServiceItem[] = [
     },
     icon: "Brush",
     startingPrice: 600,
-    unit: "m²",
+    unit: { en: "m²", fr: "m²", ar: "م²" },
   },
   {
     id: "svc-5",
@@ -79,7 +79,7 @@ export const services: ServiceItem[] = [
     },
     icon: "Palette",
     startingPrice: 1200,
-    unit: "m²",
+    unit: { en: "m²", fr: "m²", ar: "م²" },
   },
   {
     id: "svc-6",
@@ -95,7 +95,7 @@ export const services: ServiceItem[] = [
     },
     icon: "PaintRoller",
     startingPrice: 800,
-    unit: "m²",
+    unit: { en: "m²", fr: "m²", ar: "م²" },
   },
   {
     id: "svc-7",
@@ -111,7 +111,7 @@ export const services: ServiceItem[] = [
     },
     icon: "Hammer",
     startingPrice: 3500,
-    unit: "m²",
+    unit: { en: "m²", fr: "m²", ar: "م²" },
   },
   {
     id: "svc-8",

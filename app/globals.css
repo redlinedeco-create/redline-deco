@@ -56,10 +56,28 @@
     scroll-behavior: smooth;
   }
 
+  /* `clip` (not `hidden`) prevents horizontal overflow without creating a
+     scroll container, which would otherwise break the sticky header. */
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
   body {
     @apply bg-background text-foreground font-sans antialiased;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+  }
+
+  img,
+  video,
+  canvas {
+    max-width: 100%;
+  }
+
+  img {
+    height: auto;
   }
 
   html[dir="rtl"] body {
@@ -94,6 +112,20 @@
   .reveal.is-visible {
     opacity: 1;
     transform: none;
+  }
+}
+
+/* Small-screen layout hardening: force multi-column content grids to a single
+   column on phones and small tablets, and keep tables/modals inside the viewport. */
+@media (max-width: 768px) {
+  .stack-mobile {
+    grid-template-columns: 1fr !important;
+  }
+
+  .container,
+  .container-pad {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 }
 

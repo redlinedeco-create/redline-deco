@@ -55,3 +55,11 @@ public/images/pvc/
 
 # misc
 *.pem
+
+# local testimonial fallback buffer (may contain private phone numbers)
+data/pending-submissions.json
+
+# temp / generated files
+.seed-tmp/
+preview.log
+scripts/.media-rows.json

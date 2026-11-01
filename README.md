@@ -19,7 +19,7 @@ data-driven so the owner can change content without touching components.
 | Class merging | `clsx` + `tailwind-merge` (via `cn()`) |
 | i18n | Hand-rolled React Context — no i18n library |
 | Theming | React Context + `darkMode: "class"` + HSL CSS variables |
-| Backend | **None.** Demo only — see [Not implemented](#not-implemented) |
+| Backend | Supabase (Postgres + Auth + Storage) through `/api/*` route handlers |
 
 The design system follows the shadcn/ui token convention (HSL variables in
 `app/globals.css` mapped in `tailwind.config.ts`), but the components are
@@ -46,6 +46,8 @@ Open <http://localhost:3000>.
 | Command | What it does |
 | --- | --- |
 | `npm run dev` | Start the dev server |
+| `npm run dev:lan` | Dev server bound to `0.0.0.0` (local + LAN) |
+| `npm run preview` | Production server bound to `0.0.0.0` (local + LAN) |
 | `npm run build` | Production build (also type-checks) |
 | `npm run start` | Serve the production build |
 | `npm run typecheck` | `tsc --noEmit` |
@@ -53,6 +55,43 @@ Open <http://localhost:3000>.
 
 There is no automated test suite. The spec's test requirements are manual /
 browser-based — see `.trae/specs/redline-deco-website/tasks.md`.
+
+### Preview on your LAN
+
+Use the helper script: it rebuilds whenever any source file is newer than
+`.next\BUILD_ID`, then serves the **production** build on all interfaces.
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\preview.ps1
+```
+
+Any device on your network can then open `http://<this-machine-ip>:3000`
+(for example `http://192.168.1.3:3000`). Output is appended to
+`$env:TEMP\redline-preview.log`.
+
+Stop it by killing the processes bound to port 3000:
+
+```powershell
+netstat -ano | findstr ":3000" | findstr "LISTENING"
+Stop-Process -Id <pid> -Force
+```
+
+Prefer the production preview for phones/tablets: `next dev` can take
+minutes to compile a cold page, which shows up on a phone as a blank or
+half-styled page. Use `npm run dev:lan` only while editing, and re-run
+`npm run build` (or just restart `scripts\preview.ps1`) after every change.
+
+Windows Firewall blocks the port until you add this once, from an
+**elevated** terminal:
+
+```powershell
+New-NetFirewallRule -DisplayName "Redline Deco preview (TCP 3000)" `
+  -Direction Inbound -Protocol TCP -LocalPort 3000 -Action Allow `
+  -Profile Public -RemoteAddress LocalSubnet
+```
+
+The rule is scoped to your subnet and TCP 3000 only. Undo it with
+`Remove-NetFirewallRule -DisplayName "Redline Deco preview (TCP 3000)"`.
 
 ---
 
@@ -67,18 +106,48 @@ app/
   opengraph-image.tsx  Generated OG image (no binary asset needed)
   sitemap.ts robots.ts Generated sitemap.xml / robots.txt
   about/ services/ portfolio/ prices/ contact/ quote/ admin/
-components/           22 components, all named exports, all "use client"
-data/                 All editable content (projects, services, prices, categories)
+  api/
+    quote/             Public POST that stores an enquiry (quote or contact form)
+    admin/             Authenticated CRUD + the enquiry inbox + media uploads
+components/            Named exports, all "use client"
+data/                  All editable content (projects, services, prices, categories)
 lib/
-  i18n.ts             Every user-facing string, in all 3 languages
-  utils.ts            cn() helper + CONTACT_INFO
-  providers/          LanguageProvider (language + dir) and ThemeProvider
-types/index.ts        Project, Category, ServiceItem, Price, Testimonial, ContactRequest
-public/               Static assets
+  i18n.ts              Every user-facing string, in all 3 languages
+  quote.ts             Shared enquiry validation, limits and helpers
+  adminApi.ts          Browser wrappers over /api/admin
+  admin/               Session + service-role guards for the admin routes
+  utils.ts             cn() helper + CONTACT_INFO
+  providers/           LanguageProvider (language + dir) and ThemeProvider
+supabase/schema.sql    Tables, RLS, buckets — run this in the SQL editor
+types/index.ts         Project, Category, ServiceItem, Price, Testimonial, ContactRequest
+public/                Static assets
 ```
 
 Convention: **all user-facing strings go through `t()`** — see
 [Editing content](#editing-content).
+
+---
+
+## Enquiries (quote + contact)
+
+Both forms POST to `/api/quote`, which validates again server side, rate limits
+by IP, stores the row in `contact_requests`, and drops any attached photos or
+plans into the **private** `quote-attachments` bucket.
+
+The visitor then gets a reference (`RD-XXXXXX`) to quote on the phone, and the
+enquiry shows up in **`/admin` → Requests**, where it can be moved through
+`new → in progress → won / lost`, annotated with a private note, replied to by
+email or WhatsApp, and deleted (which also deletes the customer's files).
+
+Two things are deliberate:
+
+- The **anon key cannot write** to that table. All writes go through
+  `app/api/quote/route.ts`; the admin routes additionally require a session and
+  `SUPABASE_SERVICE_ROLE_KEY`.
+- If the deployment has no service-role key, the forms **do not fake a
+  success** — they show the message pre-filled for WhatsApp and email instead.
+
+Setup steps live in [`SETUP.md`](./SETUP.md).
 
 ---
 
@@ -184,15 +253,13 @@ Target is **Netlify**.
 
 These are deliberate, per the spec's non-goals. They are **not** bugs:
 
-- **No backend.** Quote and contact forms validate and show a success message
-  client-side only. The submit handler in `components/QuoteForm.tsx` has
-  explicit `TODO` markers for Email, WhatsApp, database, Supabase and CRM
-  integration.
-- **`/admin` is a demo.** It is a UI mockup with no authentication and is
-  excluded from indexing (`robots` noindex + disallowed in `robots.txt`). It is
-  **not** production-secure — do not put real data behind it.
+- **No email delivery.** Enquiries are stored in the database and answered
+  from `/admin`. Nothing mails the visitor automatically — replying is a
+  click-to-open `mailto:` / WhatsApp link.
 - **Testimonials and the map are placeholders.**
 - **QR code area is a placeholder.**
+- `/admin` is excluded from indexing (`robots` noindex + disallowed in
+  `robots.txt`).
 
 ---
 

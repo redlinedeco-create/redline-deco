@@ -18,7 +18,8 @@ export const CONTACT_INFO = {
   website: "redline-deco.netlify.app",
   whatsappLink: "https://wa.me/213657387514",
   social: {
-    facebook: "#",
-    instagram: "#",
+    facebook: "https://www.facebook.com/people/Redline-deco/61562024163100/",
+    instagram: "https://www.instagram.com/redlinedeco8",
+    tiktok: "https://www.tiktok.com/@redlinedeco",
   },
 } as const;

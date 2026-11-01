@@ -1,6 +1,9 @@
 import { PageHeader } from "@/components/PageHeader";
 import { Pricing } from "@/components/Pricing";
 import { CTASection } from "@/components/Testimonials";
+import { getPricing } from "@/lib/content";
+
+export const revalidate = 60;
 
 export const metadata = {
   title: "Prices | Redline Deco",
@@ -9,7 +12,9 @@ export const metadata = {
   alternates: { canonical: "/prices" },
 };
 
-export default function PricesPage() {
+export default async function PricesPage() {
+  const pricing = await getPricing();
+
   return (
     <>
       <PageHeader
@@ -17,7 +22,7 @@ export default function PricesPage() {
         titleI18n="pages.prices.title"
         subtitleI18n="pages.prices.subtitle"
       />
-      <Pricing preview={false} />
+      <Pricing preview={false} pricing={pricing} />
       <CTASection />
     </>
   );

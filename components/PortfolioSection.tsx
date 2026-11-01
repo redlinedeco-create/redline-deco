@@ -3,13 +3,12 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
-import type { Project } from "@/types";
+import type { Category, Project, ServiceItem } from "@/types";
 import { SectionTitle } from "./SectionTitle";
 import { PortfolioCard, PortfolioFilters } from "./Portfolio";
 import { ProjectDetailModal } from "./ProjectDetailModal";
 import { Reveal } from "./Reveal";
 import { useLanguage } from "@/lib/providers/LanguageProvider";
-import { projects } from "@/data/projects";
 import { cn } from "@/lib/utils";
 
 const filterSlugs = [
@@ -28,16 +27,41 @@ export function PortfolioSection({
   featured = false,
   showFilters = true,
   showViewAll = true,
+  projects: listProp,
+  categories,
+  services,
 }: {
   featured?: boolean;
   showFilters?: boolean;
   showViewAll?: boolean;
+  projects?: Project[];
+  categories?: Category[];
+  services?: ServiceItem[];
 }) {
   const { t, dir, language } = useLanguage();
   const [filter, setFilter] = useState("all");
   const [openProject, setOpenProject] = useState<Project | null>(null);
 
-  let list = projects;
+  if (!listProp) return null;
+
+  // Chips come from the database so categories added in /admin show up here.
+  // Unused categories are dropped so no chip leads to an empty grid.
+  const used = new Set<string>();
+  listProp.forEach((p) => {
+    used.add(p.category);
+    p.services.forEach((s) => used.add(s));
+  });
+  const chipSlugs =
+    categories && categories.length > 0
+      ? [
+          "all",
+          ...categories
+            .map((c) => c.slug)
+            .filter((s) => s && s !== "all" && used.has(s)),
+        ]
+      : filterSlugs;
+
+  let list = listProp;
   if (featured) list = list.filter((p) => p.featured);
   if (filter !== "all") {
     list = list.filter(
@@ -61,15 +85,16 @@ export function PortfolioSection({
           <PortfolioFilters
             value={filter}
             onChange={setFilter}
-            slugs={filterSlugs}
+            slugs={chipSlugs}
             count={list.length}
+            categories={categories}
           />
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12">
           {list.map((p, i) => (
             <Reveal key={p.id} delay={Math.min(i, 5) * 70}>
-              <PortfolioCard project={p} onOpen={setOpenProject} />
+              <PortfolioCard project={p} onOpen={setOpenProject} categories={categories} />
             </Reveal>
           ))}
         </div>
@@ -91,7 +116,12 @@ export function PortfolioSection({
         )}
       </div>
 
-      <ProjectDetailModal project={openProject} onClose={() => setOpenProject(null)} />
+      <ProjectDetailModal
+        project={openProject}
+        onClose={() => setOpenProject(null)}
+        categories={categories}
+        services={services}
+      />
     </section>
   );
 }

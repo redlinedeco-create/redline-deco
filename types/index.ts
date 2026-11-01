@@ -28,7 +28,7 @@ export interface ServiceItem {
   description: { en: string; fr: string; ar: string };
   icon: string;
   startingPrice?: number;
-  unit?: string;
+  unit?: { en: string; fr: string; ar: string };
 }
 
 export interface Price {
@@ -47,12 +47,14 @@ export interface Price {
 export interface Testimonial {
   id: string;
   name: string;
+  phone?: string;
   project?: string;
-  review: string;
+  review: { en: string; fr: string; ar: string };
   rating?: number;
   date?: string;
   photo?: string;
   isPlaceholder: boolean;
+  status?: "pending" | "approved" | "rejected";
 }
 
 export interface ContactRequest {

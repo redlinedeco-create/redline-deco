@@ -104,7 +104,7 @@ export function ProjectGallery({
             <ChevronRight className={cn("h-6 w-6", dir === "rtl" && "scale-x-[-1]")} />
           </button>
           <div
-            className="relative w-full max-w-5xl aspect-video"
+            className="relative w-[90vw] max-w-4xl h-[75vh] sm:h-[80vh] max-h-[90vh]"
             onClick={(e) => e.stopPropagation()}
           >
             <Image
@@ -112,7 +112,7 @@ export function ProjectGallery({
               alt={`${projectTitle ?? "Project"} image ${active + 1}`}
               fill
               className="object-contain"
-              sizes="100vw"
+              sizes="90vw"
               priority
             />
           </div>

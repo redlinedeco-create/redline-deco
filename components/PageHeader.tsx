@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useLanguage } from "@/lib/providers/LanguageProvider";
 import { cn } from "@/lib/utils";
 
@@ -31,16 +32,28 @@ export function PageHeader({
   return (
     <section
       className={cn(
-        "relative bg-gradient-to-br from-brand-red-50 to-white dark:from-brand-red-950/40 dark:to-background",
+        "relative overflow-hidden",
         bordered && "border-b border-border",
         size === "compact" ? "py-12 sm:py-14" : "py-16 sm:py-20 lg:py-24"
       )}
     >
-      <div className="container max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      {/* Background image */}
+      <Image
+        src="/images/tu-use/1000035441.png"
+        alt=""
+        fill
+        className="object-cover"
+        sizes="100vw"
+        priority
+      />
+      {/* Dark overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/55 to-black/40" />
+
+      <div className="container max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         {resolvedEyebrow && (
           <p
             className={cn(
-              "text-brand-red font-semibold uppercase tracking-[0.2em]",
+              "text-brand-red-300 font-semibold uppercase tracking-[0.2em]",
               size === "compact" ? "text-xs mb-2" : "text-sm mb-3"
             )}
           >
@@ -49,7 +62,7 @@ export function PageHeader({
         )}
         <h1
           className={cn(
-            "font-black tracking-tight text-balance",
+            "font-black tracking-tight text-balance text-white",
             size === "compact"
               ? "text-3xl sm:text-4xl"
               : "text-4xl sm:text-5xl lg:text-6xl"
@@ -58,7 +71,7 @@ export function PageHeader({
           {resolvedTitle}
         </h1>
         {resolvedSubtitle && (
-          <p className="mt-5 text-muted-foreground max-w-2xl mx-auto text-base sm:text-lg leading-relaxed">
+          <p className="mt-5 text-white/80 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed">
             {resolvedSubtitle}
           </p>
         )}

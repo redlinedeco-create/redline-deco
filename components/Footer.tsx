@@ -8,6 +8,20 @@ import { Logo } from "./Logo";
 import { useLanguage } from "@/lib/providers/LanguageProvider";
 import { CONTACT_INFO } from "@/lib/utils";
 
+/** Lucide has no TikTok brand mark, so it is drawn inline. */
+function TikTokIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      className={className}
+    >
+      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+    </svg>
+  );
+}
+
 const quickLinks = [
   { href: "/", key: "nav.home" },
   { href: "/services", key: "nav.services" },
@@ -23,7 +37,7 @@ export function Footer() {
   return (
     <footer className="relative border-t border-border bg-card mt-0">
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
+        <div className="stack-mobile grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
           <div className="sm:col-span-2 lg:col-span-1">
             <Link
               href="/"
@@ -86,6 +100,8 @@ export function Footer() {
             <div className="flex items-center gap-2 mb-6">
               <a
                 href={CONTACT_INFO.social.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label="Facebook"
                 className="h-9 w-9 inline-flex items-center justify-center rounded-md border border-border hover:bg-muted transition-colors"
               >
@@ -93,10 +109,21 @@ export function Footer() {
               </a>
               <a
                 href={CONTACT_INFO.social.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label="Instagram"
                 className="h-9 w-9 inline-flex items-center justify-center rounded-md border border-border hover:bg-muted transition-colors"
               >
                 <Instagram className="h-4 w-4" />
+              </a>
+              <a
+                href={CONTACT_INFO.social.tiktok}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="TikTok"
+                className="h-9 w-9 inline-flex items-center justify-center rounded-md border border-border hover:bg-muted transition-colors"
+              >
+                <TikTokIcon className="h-4 w-4" />
               </a>
               <a
                 href={CONTACT_INFO.whatsappLink}

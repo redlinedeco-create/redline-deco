@@ -3,22 +3,23 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { MapPin, ArrowUpRight } from "lucide-react";
-import type { Project } from "@/types";
+import type { Category, Project } from "@/types";
 import { useLanguage } from "@/lib/providers/LanguageProvider";
-import { categories } from "@/data/categories";
 import { cn } from "@/lib/utils";
 
 export function PortfolioCard({
   project,
   onOpen,
+  categories,
 }: {
   project: Project;
   onOpen?: (p: Project) => void;
+  categories?: Category[];
 }) {
   const { language, dir } = useLanguage();
   const title = project.title[language] ?? project.title.en;
   const location = project.location[language] ?? project.location.en;
-  const cat = categories.find((c) => c.slug === project.category);
+  const cat = categories?.find((c) => c.slug === project.category);
   const catName = cat?.name[language] ?? project.category;
 
   return (
@@ -84,14 +85,16 @@ export function PortfolioFilters({
   onChange,
   slugs,
   count,
+  categories: catsProp,
 }: {
   value: string;
   onChange: (s: string) => void;
   slugs: string[];
   count?: number;
+  categories?: Category[];
 }) {
   const { language, t } = useLanguage();
-  const cats = categories.filter((c) => slugs.includes(c.slug));
+  const cats = (catsProp ?? []).filter((c) => slugs.includes(c.slug));
   const listRef = useRef<HTMLDivElement>(null);
   const [indicator, setIndicator] = useState({ left: 0, width: 0 });
 

@@ -3,19 +3,26 @@
 import Link from "next/link";
 import { ArrowRight, Info } from "lucide-react";
 import { SectionTitle } from "./SectionTitle";
-import { pricing } from "@/data/pricing";
 import { useLanguage } from "@/lib/providers/LanguageProvider";
 import { cn } from "@/lib/utils";
+import type { Price } from "@/types";
 
+/**
+ * Known category slugs, in display order. The bundled fallback data and the
+ * seeded database historically used two different naming schemes, so both are
+ * listed; any category we have never seen is appended rather than dropped.
+ */
 const categoryOrder = [
-  "drywall",
-  "ceilings",
-  "partitions",
+  "peinture-applications",
+  "esthetique-lumiere",
+  "placoplatre-pvc",
   "painting",
   "decorative",
-  "finishing",
-  "other",
+  "drywall",
 ];
+
+/** Rows shown per category on the home-page preview (all rows on /prices). */
+const PREVIEW_ROWS = 3;
 
 function formatPrice(n: number, currency: string) {
   if (n === 0) return "";
@@ -25,16 +32,32 @@ function formatPrice(n: number, currency: string) {
   }).format(n) + (currency ? ` ${currency}` : "");
 }
 
-export function Pricing({ preview = false }: { preview?: boolean }) {
+export function Pricing({
+  preview = false,
+  pricing: rowsProp,
+}: {
+  preview?: boolean;
+  pricing?: Price[];
+}) {
   const { t, language, dir } = useLanguage();
-  const rows = preview ? pricing.slice(0, 6) : pricing;
+  const rows = rowsProp;
 
-  const grouped = categoryOrder
-    .map((catKey) => ({
-      key: catKey,
-      title: t(`pricing.categories.${catKey}`),
-      items: rows.filter((p) => p.category === catKey),
-    }))
+  if (!rows) return null;
+
+  const known = new Set(categoryOrder);
+  const extra = Array.from(new Set(rows.map((r) => r.category))).filter(
+    (c) => !known.has(c),
+  );
+
+  const grouped = [...categoryOrder, ...extra]
+    .map((catKey) => {
+      const items = rows.filter((p) => p.category === catKey);
+      return {
+        key: catKey,
+        title: t(`pricing.categories.${catKey}`),
+        items: preview ? items.slice(0, PREVIEW_ROWS) : items,
+      };
+    })
     .filter((g) => g.items.length > 0);
 
   return (
@@ -134,7 +157,7 @@ export function Pricing({ preview = false }: { preview?: boolean }) {
                 <ArrowRight className={cn("h-4 w-4", dir === "rtl" && "scale-x-[-1]")} />
               </Link>
               <Link
-                href="/quote"
+                href="/contact"
                 className="inline-flex items-center gap-2 rounded-md bg-brand-red text-white px-6 py-3 font-semibold shadow hover:bg-brand-red-600 transition-colors"
               >
                 {t("pricing.cta")}
@@ -143,7 +166,7 @@ export function Pricing({ preview = false }: { preview?: boolean }) {
             </div>
           ) : (
             <Link
-              href="/quote"
+              href="/contact"
               className="inline-flex items-center gap-2 rounded-md bg-brand-red text-white px-8 py-4 text-base font-semibold shadow-lg shadow-brand-red/20 hover:bg-brand-red-600 transition-colors"
             >
               {t("pricing.cta")}

@@ -64,7 +64,7 @@ export function Header() {
           <LanguageSwitcher variant="inline" />
           <ThemeToggle />
           <Link
-            href="/quote"
+            href="/contact"
             className="inline-flex items-center gap-1.5 rounded-md bg-brand-red text-white px-4 py-2 text-sm font-semibold shadow-sm hover:bg-brand-red-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-offset-2"
           >
             {t("nav.quote")}
@@ -105,7 +105,7 @@ export function Header() {
               <LanguageSwitcher variant="inline" />
             </div>
             <Link
-              href="/quote"
+              href="/contact"
               onClick={() => setOpen(false)}
               className="mt-3 w-full inline-flex items-center justify-center gap-1.5 rounded-md bg-brand-red text-white px-4 py-3 text-base font-semibold shadow-sm hover:bg-brand-red-600 transition-colors"
             >
